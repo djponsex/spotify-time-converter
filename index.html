@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎧 Conversor de Tiempos Spotify</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #ffffff;
+      font-family: 'Circular', 'Helvetica Neue', sans-serif;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      color: #1DB954;
+      font-size: 2.5em;
+    }
+    textarea {
+      width: 90%;
+      height: 180px;
+      background-color: #1e1e1e;
+      color: #1DB954;
+      font-family: monospace;
+      font-size: 1em;
+      border: 2px solid #1DB954;
+      border-radius: 10px;
+      padding: 10px;
+      margin-top: 10px;
+    }
+    button {
+      background-color: #1DB954;
+      color: #121212;
+      border: none;
+      padding: 10px 20px;
+      margin: 20px;
+      font-size: 1em;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #output {
+      width: 90%;
+      height: auto;
+      background-color: #1e1e1e;
+      color: #1DB954;
+      font-family: monospace;
+      font-size: 1em;
+      border: 2px solid #1DB954;
+      border-radius: 10px;
+      padding: 10px;
+      margin-top: 20px;
+      white-space: pre-wrap;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎧 Conversor de Tiempos Spotify</h1>
+  <p>Pega tus cortes abajo (formato 2:10 – CORTE)</p>
+  <textarea id="input"></textarea><br>
+  <button onclick="convertir()">Convertir</button>
+  <button onclick="copiar()">Copiar JSON</button>
+  <pre id="output">{}</pre>
+
+  <script>
+    const emojis = {
+      'APUNTAR': '🎯',
+      'SALIDA': '🚪',
+      'INICIO': '🎬',
+      'FIGURA': '🕺',
+      'ROMÁNTICA': '💖',
+      'SAMBO': '💃',
+      'RELOJ': '⏰',
+      'CANCIÓN': '🎵',
+      'CHAMBERGO': '🎩',
+      'APRENDE': '📚',
+      'FINAL': '🏁',
+      'CRUCE': '➕'
+    };
+
+    function convertir() {
+      const texto = document.getElementById("input").value;
+      const lineas = texto.trim().split(/\n|\r|\r\n/);
+      const resultado = {};
+
+      for (const linea of lineas) {
+        const match = linea.match(/(\d{1,2}):(\d{2})\s+[-–]\s+(.+)/);
+        if (!match) continue;
+        const minutos = parseInt(match[1], 10);
+        const segundos = parseInt(match[2], 10);
+        const tiempoMS = (minutos * 60 + segundos) * 1000;
+        let nombre = match[3].trim().toUpperCase();
+
+        for (const palabra in emojis) {
+          if (nombre.includes(palabra)) {
+            nombre = emojis[palabra] + ' ' + nombre;
+            break;
+          }
+        }
+
+        nombre += ` (${match[1]}:${match[2]})`;
+        resultado[nombre] = tiempoMS;
+      }
+
+      document.getElementById("output").textContent = JSON.stringify(resultado, null, 2);
+    }
+
+    function copiar() {
+      const salida = document.getElementById("output").textContent;
+      navigator.clipboard.writeText(salida).then(() => {
+        alert("¡Copiado al portapapeles!");
+      });
+    }
+  </script>
+</body>
+</html>
