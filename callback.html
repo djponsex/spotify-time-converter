@@ -1,0 +1,103 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>🎧 Callback Spotify</title>
+    <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #191414, #1db954);
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: #121212;
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        img {
+            width: 100px;
+            margin-bottom: 1rem;
+        }
+        h1 {
+            font-size: 2rem;
+            color: #1db954;
+        }
+        textarea {
+            width: 100%;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 10px;
+            border: none;
+            resize: none;
+            background: #303030;
+            color: #fff;
+            font-size: 1rem;
+        }
+        button {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 10px;
+            background: #1db954;
+            color: #fff;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        #checkmark {
+            display: none;
+            font-size: 1.5rem;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="codeContainer">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg" alt="Spotify Logo"/>
+        <h1>🎧 Código Autorización Spotify</h1>
+        <textarea readonly id="codeBox"></textarea>
+        <button onclick="copyCode()">Copiar código</button>
+        <div id="checkmark">✅ Copiado</div>
+    </div>
+    <div class="container" id="errorContainer" style="display:none;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg" alt="Spotify Logo"/>
+        <h1 style="color: #e53935;">❌ Error</h1>
+        <textarea readonly id="errorBox"></textarea>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get("code");
+        const error = params.get("error");
+
+        if (code) {
+            document.getElementById("codeBox").value = code;
+        } else {
+            document.getElementById("codeContainer").style.display = "none";
+            document.getElementById("errorContainer").style.display = "block";
+            document.getElementById("errorBox").value = error || "No error or code parameter found in URL.";
+        }
+
+        function copyCode() {
+            const text = document.getElementById("codeBox").value;
+            navigator.clipboard.writeText(text).then(() => {
+                document.getElementById("checkmark").style.display = "block";
+                setTimeout(() => {
+                    document.getElementById("checkmark").style.display = "none";
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
