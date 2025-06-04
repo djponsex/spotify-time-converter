@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="https://www.scdn.co/i/_global/favicon.png" type="image/png">
-    <title>Conversor de Tiempos Spotify PRO</title>
+    
     <style>
         * {
             margin: 0;
@@ -16,9 +16,40 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background: #000000;
             min-height: 100vh;
-            color: #ffffff;
+            color: #1DB954;
             position: relative;
             overflow-x: hidden;
+        }
+
+        .input-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        /* Primer <span> (Texto principal) */
+        .input-header span:first-child {
+          font-size: 17px;
+          font-weight: 400;
+          color: #1DB954;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+
+        /* Segundo <span> (contador) */
+        .input-header span:last-child {
+          font-size: 15px;
+          font-weight: 500;
+          color: rgba(255, 255, 255, 0.6);
+          display: flex;
+          align-items: center;
+          gap: 5px;
+        }
+
+        .input-header span:last-child {
+          transition: all 0.3s ease-in-out;
         }
 
         /* Fondo degradado */
@@ -50,13 +81,13 @@
 
         .logo {
             font-size: 60px;
-            margin-bottom: 20px;
+            margin-bottom: 1px; /* era 20 */
         }
 
         h1 {
             font-size: 2.5em;
             font-weight: 700;
-            color: #ffffff;
+            color: #1DB954;
             margin-bottom: 10px;
             text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
         }
@@ -71,10 +102,11 @@
             background: rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(10px);
             border-radius: 20px;
-            padding: 30px;
+            padding: 12px 30px 30px 30px; /* top right bottom left */
             margin-bottom: 30px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
+
 
         .input-header {
             display: flex;
@@ -397,9 +429,13 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <div class="logo">🎧</div>
-            <h1>Conversor de Tiempos Spotify PRO</h1>
-            <p class="subtitle">Convierte tus cortes al formato JSON</p>
+            <div class="logo" style="text-align: center; margin-bottom: 1px;">
+                <img 
+                    src="https://raw.githubusercontent.com/djponsex/spotify-time-converter/main/A_digital_graphic_design_features_the_Spotify_Tim.png"
+                    alt="Conversor de Tiempos Spotify PRO"
+                    style="max-width: 800px; height: auto;"
+                >
+            </div>
         </div>
 
         <!-- Entrada -->
