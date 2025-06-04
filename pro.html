@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversor de Tiempos Spotify PRO</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #000000;
+            min-height: 100vh;
+            color: #ffffff;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Fondo degradado */
+        .gradient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60vh;
+            background: linear-gradient(to bottom, #1DB954 0%, #1a8742 40%, #000000 100%);
+            z-index: -1;
+        }
+
+        /* Contenedor principal */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-top: 20px;
+        }
+
+        .logo {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1em;
+        }
+
+        /* Caja de entrada */
+        .input-box {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .input-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .char-count {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 250px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(29, 185, 84, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            color: #1DB954;
+            font-size: 16px;
+            font-family: 'Courier New', Courier, monospace;
+            line-height: 1.6;
+            resize: vertical;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #1DB954;
+            box-shadow: 0 0 20px rgba(29, 185, 84, 0.2);
+        }
+
+        textarea::placeholder {
+            color: rgba(29, 185, 84, 0.5);
+        }
+
+        /* Botones rápidos */
+        .quick-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-quick {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-quick:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #1DB954;
+        }
+
+        /* Botón principal */
+        .btn-convert {
+            display: block;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto 30px;
+            background: #1DB954;
+            color: #000000;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(29, 185, 84, 0.3);
+        }
+
+        .btn-convert:hover {
+            background: #1ed760;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(29, 185, 84, 0.4);
+        }
+
+        /* Resultados */
+        .results-box {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            display: none;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 3px;
+            border-radius: 20px;
+        }
+
+        .tab {
+            padding: 8px 16px;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            font-size: 14px;
+            border-radius: 17px;
+            transition: all 0.2s ease;
+        }
+
+        .tab.active {
+            background: #1DB954;
+            color: #000000;
+        }
+
+        .results-content {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 12px;
+            padding: 20px;
+            font-family: 'Courier New', Courier, monospace;
+            color: #1DB954;
+            font-size: 14px;
+            line-height: 1.6;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        /* Botones de acción */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn-action {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            padding: 12px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-action:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #1DB954;
+            transform: translateY(-1px);
+        }
+
+        /* Estadísticas */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1DB954;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+        }
+
+        /* Notificación */
+        .notification {
+            position: fixed;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1DB954;
+            color: #000000;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            box-shadow: 0 5px 20px rgba(29, 185, 84, 0.4);
+            transition: top 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1000;
+        }
+
+        .notification.show {
+            top: 30px;
+        }
+
+        /* Historial */
+        .history-panel {
+            position: fixed;
+            right: -300px;
+            top: 0;
+            bottom: 0;
+            width: 300px;
+            background: rgba(0, 0, 0, 0.95);
+            padding: 20px;
+            transition: right 0.3s ease;
+            z-index: 100;
+            overflow-y: auto;
+        }
+
+        .history-panel.show {
+            right: 0;
+        }
+
+        .history-toggle {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #1DB954;
+            color: #000000;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            box-shadow: 0 5px 20px rgba(29, 185, 84, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .history-toggle:hover {
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .history-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .history-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .history-date {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .history-preview {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 5px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2em;
+            }
+            
+            .quick-buttons {
+                flex-direction: column;
+            }
+            
+            .btn-quick {
+                width: 100%;
+            }
+            
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="gradient-bg"></div>
+    <div class="notification" id="notification"></div>
+    
+    <!-- Panel de historial -->
+    <div class="history-panel" id="historyPanel">
+        <h3 style="margin-bottom: 20px;">📋 Historial</h3>
+        <div id="historyList"></div>
+    </div>
+    
+    <!-- Botón de historial -->
+    <button class="history-toggle" onclick="toggleHistory()">📋</button>
+    
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">🎧</div>
+            <h1>Conversor de Tiempos Spotify PRO</h1>
+            <p class="subtitle">Convierte tus cortes al formato JSON</p>
+        </div>
+
+        <!-- Entrada -->
+        <div class="input-box">
+            <div class="input-header">
+                <span>Pega tu lista de cortes</span>
+                <span class="char-count" id="charCount">0 caracteres</span>
+            </div>
+            <textarea 
+                id="inputText" 
+                placeholder="2:10 - INICIO ARICA
+2:25 - FIGURA INICIAL
+3:50 - PARTE ROMÁNTICA
+..."
+                oninput="updateCharCount()"
+            ></textarea>
+            
+            <div class="quick-buttons">
+                <button class="btn-quick" onclick="loadExample()">
+                    📝 Cargar ejemplo
+                </button>
+                <button class="btn-quick" onclick="pasteFromClipboard()">
+                    📋 Pegar
+                </button>
+                <button class="btn-quick" onclick="clearAll()">
+                    🗑️ Limpiar
+                </button>
+            </div>
+        </div>
+
+        <!-- Botón convertir -->
+        <button class="btn-convert" onclick="convert()">
+            Convertir a JSON
+        </button>
+
+        <!-- Resultados -->
+        <div class="results-box" id="resultsBox">
+            <div class="results-header">
+                <h3>Resultados</h3>
+                <div class="tabs">
+                    <button class="tab active" onclick="switchView('visual')">Visual</button>
+                    <button class="tab" onclick="switchView('raw')">Raw</button>
+                </div>
+            </div>
+            
+            <div class="results-content" id="resultsContent"></div>
+            
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalCuts">0</div>
+                    <div class="stat-label">Total Cortes</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="duration">0:00</div>
+                    <div class="stat-label">Duración</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="avgTime">0s</div>
+                    <div class="stat-label">Promedio</div>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn-action" onclick="copyJSON()">
+                    📋 Copiar JSON
+                </button>
+                <button class="btn-action" onclick="downloadJSON()">
+                    💾 Descargar
+                </button>
+                <button class="btn-action" onclick="shareData()">
+                    🔗 Compartir
+                </button>
+                <button class="btn-action" onclick="sortByTime()">
+                    🔄 Ordenar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let rawData = {};
+        let visualData = {};
+        let currentView = 'visual';
+        let cuts = [];
+        let history = [];
+
+        // Emojis para los cortes
+        const emojiMap = {
+            'INICIO': '🏁',
+            'FIGURA': '💃',
+            'PARTE': '📍',
+            'FINAL': '💕',
+            'APRENDE': '🎯',
+            'CHAMBERGO': '🎩',
+            'CRUCE': '➕',
+            'CANCIÓN': '🎵',
+            'CORTE': '✂️',
+            'APUNTAR': '🎯',
+            'SALTITO': '🦘',
+            'CANON': '🎪',
+            'GILDA': '🎤',
+            'RELOJ': '⏰',
+            'CELIA': '🎶',
+            'SALIDA': '🚪',
+            'ARICA': '🌴',
+            'BLOQUE': '📦',
+            'RED': '🔴',
+            'ROMANTICA': '💕',
+            'ROMÁNTICA': '💕'
+        };
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            loadHistory();
+            checkUrlParams();
+        });
+
+        // Actualizar contador de caracteres
+        function updateCharCount() {
+            const text = document.getElementById('inputText').value;
+            document.getElementById('charCount').textContent = text.length + ' caracteres';
+        }
+
+        // Cargar ejemplo
+        function loadExample() {
+            const example = `2:10 - INICIO ARICA
+2:25 - FIGURA INICIAL
+3:50 - PARTE ROMÁNTICA
+4:00 - FINAL PARTE ROMÁNTICA
+4:30 - 2° FIGURA
+5:02 - APRENDE CARAJO
+5:14 - CHAMBERGO
+5:30 - CRUCE 1° FILA
+5:43 - CANCIÓN RED
+6:24 - SEGUNDA PARTE (ARRIBA MARTINES)
+7:45 - CORTE
+7:58 - APUNTAR
+8:02 - SALTITO
+8:20 - CANON
+8:37 - INICIO S BLOQUE
+8:56 - CANCIÓN GILDA
+9:15 - CUARTA PARTE
+9:37 - RELOJ
+10:07 - CANCIÓN CELIA CRUZ
+10:45 - FIGURA FINAL
+10:50 - SALIDA ARICA`;
+            
+            document.getElementById('inputText').value = example;
+            updateCharCount();
+            showNotification('📝 Ejemplo cargado');
+        }
+
+        // Pegar desde portapapeles
+        async function pasteFromClipboard() {
+            try {
+                const text = await navigator.clipboard.readText();
+                document.getElementById('inputText').value = text;
+                updateCharCount();
+                showNotification('📋 Pegado desde el portapapeles');
+            } catch (err) {
+                showNotification('❌ No se pudo acceder al portapapeles');
+            }
+        }
+
+        // Limpiar todo
+        function clearAll() {
+            document.getElementById('inputText').value = '';
+            updateCharCount();
+            document.getElementById('resultsBox').style.display = 'none';
+            showNotification('🗑️ Todo limpiado');
+        }
+
+        // Obtener emoji
+        function getEmoji(name) {
+            const upperName = name.toUpperCase();
+            for (const [key, emoji] of Object.entries(emojiMap)) {
+                if (upperName.includes(key)) {
+                    return emoji;
+                }
+            }
+            return '🎵';
+        }
+
+        // Convertir tiempo a milisegundos
+        function timeToMs(time) {
+            const [min, sec] = time.split(':').map(Number);
+            return (min * 60 + sec) * 1000;
+        }
+
+        // Convertir milisegundos a tiempo
+        function msToTime(ms) {
+            const totalSeconds = Math.floor(ms / 1000);
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Convertir
+        function convert() {
+            const input = document.getElementById('inputText').value.trim();
+            
+            if (!input) {
+                showNotification('⚠️ Por favor ingresa algunos cortes');
+                return;
+            }
+            
+            // Resetear datos
+            rawData = {};
+            visualData = {};
+            cuts = [];
+            
+            // Procesar líneas
+            const lines = input.split('\n');
+            
+            lines.forEach(line => {
+                const match = line.match(/(\d+:\d+)\s*-\s*(.+)/);
+                if (match) {
+                    const time = match[1];
+                    const name = match[2].trim();
+                    const ms = timeToMs(time);
+                    
+                    cuts.push({ time, name, ms });
+                    
+                    // Raw data
+                    rawData[name] = ms;
+                    
+                    // Visual data
+                    const emoji = getEmoji(name);
+                    const visualName = `${emoji} ${name} (${time})`;
+                    visualData[visualName] = ms;
+                }
+            });
+            
+            if (cuts.length === 0) {
+                showNotification('❌ No se encontraron cortes válidos');
+                return;
+            }
+            
+            // Mostrar resultados
+            displayResults();
+            updateStats();
+            saveToHistory();
+            showNotification('✅ ¡Conversión exitosa!');
+        }
+
+        // Mostrar resultados
+        function displayResults() {
+            const resultsBox = document.getElementById('resultsBox');
+            const resultsContent = document.getElementById('resultsContent');
+            
+            resultsBox.style.display = 'block';
+            
+            const data = currentView === 'visual' ? visualData : rawData;
+            resultsContent.textContent = JSON.stringify(data, null, 2);
+        }
+
+        // Actualizar estadísticas
+        function updateStats() {
+            document.getElementById('totalCuts').textContent = cuts.length;
+            
+            if (cuts.length > 0) {
+                const lastCut = cuts[cuts.length - 1];
+                document.getElementById('duration').textContent = lastCut.time;
+                
+                if (cuts.length > 1) {
+                    const avgMs = lastCut.ms / (cuts.length - 1);
+                    const avgSec = Math.round(avgMs / 1000);
+                    document.getElementById('avgTime').textContent = avgSec + 's';
+                }
+            }
+        }
+
+        // Cambiar vista
+        function switchView(view) {
+            currentView = view;
+            
+            // Actualizar tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            displayResults();
+        }
+
+        // Copiar JSON
+        async function copyJSON() {
+            const data = currentView === 'visual' ? visualData : rawData;
+            const jsonStr = JSON.stringify(data, null, 2);
+            
+            try {
+                await navigator.clipboard.writeText(jsonStr);
+                showNotification('📋 JSON copiado al portapapeles');
+            } catch (err) {
+                showNotification('❌ Error al copiar');
+            }
+        }
+
+        // Descargar JSON
+        function downloadJSON() {
+            const data = currentView === 'visual' ? visualData : rawData;
+            const jsonStr = JSON.stringify(data, null, 2);
+            
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `spotify_cortes_${currentView}_${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showNotification('💾 Archivo descargado');
+        }
+
+        // Compartir
+        async function shareData() {
+            const data = currentView === 'visual' ? visualData : rawData;
+            const jsonStr = JSON.stringify(data);
+            const encoded = btoa(encodeURIComponent(jsonStr));
+            const url = `${window.location.origin}${window.location.pathname}?data=${encoded}`;
+            
+            try {
+                await navigator.clipboard.writeText(url);
+                showNotification('🔗 Enlace copiado al portapapeles');
+            } catch (err) {
+                showNotification('❌ Error al compartir');
+            }
+        }
+
+        // Ordenar por tiempo
+        function sortByTime() {
+            cuts.sort((a, b) => a.ms - b.ms);
+            
+            // Reconstruir datos
+            rawData = {};
+            visualData = {};
+            
+            cuts.forEach(cut => {
+                rawData[cut.name] = cut.ms;
+                
+                const emoji = getEmoji(cut.name);
+                const visualName = `${emoji} ${cut.name} (${cut.time})`;
+                visualData[visualName] = cut.ms;
+            });
+            
+            displayResults();
+            showNotification('🔄 Cortes ordenados por tiempo');
+        }
+
+        // Mostrar notificación
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Historial
+        function saveToHistory() {
+            const historyItem = {
+                date: new Date().toISOString(),
+                preview: cuts.slice(0, 3).map(c => c.name).join(', ') + '...',
+                data: {
+                    raw: rawData,
+                    visual: visualData,
+                    cuts: cuts
+                }
+            };
+            
+            history.unshift(historyItem);
+            if (history.length > 10) history.pop();
+            
+            localStorage.setItem('spotifyHistory', JSON.stringify(history));
+            loadHistory();
+        }
+
+        function loadHistory() {
+            try {
+                const saved = localStorage.getItem('spotifyHistory');
+                if (saved) {
+                    history = JSON.parse(saved);
+                    displayHistory();
+                }
+            } catch (err) {
+                console.error('Error loading history:', err);
+            }
+        }
+
+        function displayHistory() {
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = '';
+            
+            history.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'history-item';
+                div.onclick = () => loadFromHistory(index);
+                
+                const date = new Date(item.date);
+                const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+                
+                div.innerHTML = `
+                    <div class="history-date">${dateStr}</div>
+                    <div class="history-preview">${item.preview}</div>
+                `;
+                
+                historyList.appendChild(div);
+            });
+        }
+
+        function loadFromHistory(index) {
+            const item = history[index];
+            rawData = item.data.raw;
+            visualData = item.data.visual;
+            cuts = item.data.cuts;
+            
+            // Reconstruir input
+            const inputText = cuts.map(c => `${c.time} - ${c.name}`).join('\n');
+            document.getElementById('inputText').value = inputText;
+            updateCharCount();
+            
+            displayResults();
+            updateStats();
+            toggleHistory();
+            showNotification('📋 Cargado desde el historial');
+        }
+
+        function toggleHistory() {
+            const panel = document.getElementById('historyPanel');
+            panel.classList.toggle('show');
+        }
+
+        // Verificar parámetros URL
+        function checkUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            const data = params.get('data');
+            
+            if (data) {
+                try {
+                    const decoded = decodeURIComponent(atob(data));
+                    const parsed = JSON.parse(decoded);
+                    
+                    // Reconstruir cortes
+                    cuts = [];
+                    for (const [key, value] of Object.entries(parsed)) {
+                        const time = msToTime(value);
+                        const name = key.replace(/^[^\s]+ /, '').replace(/ \([^)]+\)$/, '');
+                        cuts.push({ time, name, ms: value });
+                    }
+                    
+                    const inputText = cuts.map(c => `${c.time} - ${c.name}`).join('\n');
+                    document.getElementById('inputText').value = inputText;
+                    updateCharCount();
+                    
+                    showNotification('📥 Datos cargados desde el enlace');
+                } catch (err) {
+                    console.error('Error loading URL data:', err);
+                }
+            }
+        }
+
+        // Atajos de teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 'Enter':
+                        e.preventDefault();
+                        convert();
+                        break;
+                    case 'h':
+                        e.preventDefault();
+                        toggleHistory();
+                        break;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
