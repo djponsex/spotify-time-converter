@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Coreografía - Spotify</title>
+    <style>
+        :root {
+            --spotify-green: #1DB954;
+            --spotify-black: #121212;
+            --spotify-dark-gray: #212121;
+            --spotify-light-gray: #535353;
+            --spotify-white: #FFFFFF;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--spotify-black);
+            color: var(--spotify-white);
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: var(--spotify-green);
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        h2 {
+            color: var(--spotify-green);
+            font-size: 20px;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid var(--spotify-light-gray);
+            padding-bottom: 5px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+            background-color: var(--spotify-dark-gray);
+            border-radius: 10px;
+            padding: 15px;
+        }
+        
+        .button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            background-color: var(--spotify-green);
+            color: var(--spotify-white);
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        
+        .button:active {
+            transform: scale(0.98);
+            background-color: #19a34b;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        
+        .grid-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        
+        .small-button {
+            font-size: 14px;
+            padding: 12px 8px;
+        }
+        
+        .now-playing {
+            background-color: rgba(29, 185, 84, 0.1);
+            border: 1px solid var(--spotify-green);
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .now-playing-icon {
+            width: 40px;
+            height: 40px;
+            background-color: var(--spotify-green);
+            border-radius: 50%;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .now-playing-info {
+            flex-grow: 1;
+        }
+        
+        .song-title {
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+        
+        .control-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--spotify-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+        
+        .status {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--spotify-light-gray);
+        }
+        
+        .tab-container {
+            margin-bottom: 20px;
+        }
+        
+        .tabs {
+            display: flex;
+            background-color: var(--spotify-dark-gray);
+            border-radius: 30px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            flex-grow: 1;
+            text-align: center;
+            padding: 12px;
+            background-color: transparent;
+            color: var(--spotify-white);
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .tab.active {
+            background-color: var(--spotify-green);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .search-container {
+            margin-bottom: 15px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 30px;
+            border: none;
+            background-color: var(--spotify-light-gray);
+            color: var(--spotify-white);
+            font-size: 16px;
+        }
+        
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .time-jump-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .time-jump-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid var(--spotify-light-gray);
+        }
+        
+        .time-jump-name {
+            font-weight: bold;
+        }
+        
+        .time-jump-time {
+            color: var(--spotify-green);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Control de Coreografía</h1>
+        <p>Spotify Time Controller</p>
+    </header>
+    
+    <div class="now-playing">
+        <div class="now-playing-icon">
+            ▶️
+        </div>
+        <div class="now-playing-info">
+            <div class="song-title">Canción de Coreografía</div>
+            <div>Reproduciendo ahora</div>
+        </div>
+    </div>
+    
+    <div class="controls">
+        <a href="shortcuts://run-shortcut?name=Spotify%20Play&input=text&text=previous" class="control-button">⏮️</a>
+        <a href="shortcuts://run-shortcut?name=Spotify%20Play&input=text&text=play" class="control-button">▶️</a>
+        <a href="shortcuts://run-shortcut?name=Spotify%20Play&input=text&text=pause" class="control-button">⏸️</a>
+        <a href="shortcuts://run-shortcut?name=Spotify%20Play&input=text&text=next" class="control-button">⏭️</a>
+    </div>
+    
+    <div class="tab-container">
+        <div class="tabs">
+            <button class="tab active" onclick="openTab(event, 'quick-jumps')">Saltos Rápidos</button>
+            <button class="tab" onclick="openTab(event, 'all-jumps')">Todos los Saltos</button>
+            <button class="tab" onclick="openTab(event, 'settings')">Ajustes</button>
+        </div>
+        
+        <div id="quick-jumps" class="tab-content active">
+            <div class="section">
+                <h2>Secciones Principales</h2>
+                <div class="grid">
+                    <a href="shortcuts://run-shortcut?name=Spotify%20Time%20Jump&input=text&text=INICIO%20ARICA" class="button">INICIO ARICA</a>
+                    <a href="shortcuts://run-shortcut?name=Spotify%20Time%20Jump&input=text&text=1%C2%B0%20FIGURA%20INICIAL" class="button">1° FIGURA</a>
+                    <a href="shortcuts://run-shortcut?name=Spotify%20Time%20Jump&input=text&text=PARTE%20ROMANTICA" class="button">ROMÁNTICA</a>
+                    <a href="shortcuts://run-shortcut?name=Spotify%20Time%20Jump&input=text&text=2%C2%B0%20FIGURA" class="button">2° FIGURA</a>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Figuras Clave</h2>
+                <div class="grid grid-3">
+                    <a href="shortcuts://run-shortcut?name=Spotify%20Time%20Jump&input=text&text=3%C2%BA%20FIGURA" class="button small-button">3° FIGURA</a>
+                    <a href="shortcuts://run-shortcut?name=Spotify%20Time%20Jump&input=text&text=CANON" class="button small-button">CANON</a>
+                    <a href="shortcuts://run-shortcut?name=Spotify%20Time%20Jump&input=text&text=SAMBO" class="button small-button">SAMBO</a>
+                    <a href="shortcuts://run-shortcut?name=Spotify%20Time%20Jump&input=text&text=CORTE" class="button small-button">CORTE</a>
+                    <a href="shortcuts://run-shortcut?name=Spotify%20Time%20Jump&input=text&text=SALTITO" class="button small-button">SALTITO</a>
+                    <a href="shortcuts://run-shortcut?name=Spotify%20Time%20Jump&input=text&text=RELOJ" class="button small-button">RELOJ</a>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Final</h2>
+                <div class="grid">
+                    <a href="shortcuts://run-shortcut?name=Spotify%20Time%20Jump&input=text&text=FIGURA%20FINAL" class="button">FIGURA FINAL</a>
+                    <a href="shortcuts://run-shortcut?name=Spotify%20Time%20Jump&input=text&text=SALIDA%20ARICA" class="button">SALIDA ARICA</a>
+                </div>
+            </div>
+        </div>
+        
+        <div id="all-jumps" class="tab-content">
+            <div class="section">
+                <div class="search-container">
+                    <input type="text" class="search-input" placeholder="Buscar punto de salto..." oninput="filterJumps(this.value)">
+                </div>
+                
+                <div class="time-jump-list" id="jump-list">
+                    <div class="time-jump-item" onclick="jumpToTime('INICIO ARICA')">
+                        <span class="time-jump-name">INICIO ARICA</span>
+                        <span class="time-jump-time">2:10</span>
+                    </div>
+                    <div class="time-jump-item" onclick="jumpToTime('1° FIGURA INICIAL')">
+                        <span class="time-jump-name">1° FIGURA INICIAL</span>
+                        <span class="time-jump-time">2:25</span>
+                    </div>
+                    <div class="time-jump-item" onclick="jumpToTime('PARTE ROMANTICA')">
+                        <span class="time-jump-name">PARTE ROMANTICA</span>
+                        <span class="time-jump-time">3:50</span>
+                    </div>
+                    <div class="time-jump-item" onclick="jumpToTime('FINAL PARTE ROMÁNTICA')">
+                        <span class="time-jump-name">FINAL PARTE ROMÁNTICA</span>
+                        <span class="time-jump-time">4:00</span>
+                    </div>
+                    <div class="time-jump-item" onclick="jumpToTime('2° FIGURA')">
+                        <span class="time-jump-name">2° FIGURA</span>
+                        <span class="time-jump-time">4:30</span>
+                    </div>
+                    <div class="time-jump-item" onclick="jumpToTime('APRENDE CARAJO')">
+                        <span class="time-jump-name">APRENDE CARAJO</span>
+                        <span class="time-jump-time">5:02</span>
+                    </div>
+                    <div class="time-jump-item" onclick="jumpToTime('CHAMBERGO')">
+                        <span class="time-jump-name">CHAMBERGO</span>
+                        <span class="time-jump-time">5:14</span>
+                    </div>
+                    <div class="time-jump-item" onclick="jumpToTime('CRUCE 1° FILA')">
+                        <span class="time-jump-name">CRUCE 1° FILA</span>
+                        <span class="time-jump-time">5:30</span>
+                    </div>
+                    <div class="time-jump-item" onclick="jumpToTime('CANCIÓN RED')">
+                        <span class="time-jump-name">CANCIÓN RED</span>
+                        <span class="time-jump-time">5:43</span>
+                    </div>
+                    <div class="time-jump-item" onclick="jumpToTime('SEGUNDA PARTE')">
+                        <span class="time-jump-name">SEGUNDA PARTE</span>
+                        <span class="time-jump-time">6:24</span>
+                    </div>
+                    <div class="time-jump-item" onclick="jumpToTime('CANON')">
+                        <span class="time-jump-name">CANON</span>
+                        <span class="time-jump-time">6:39</span>
+                    </div>
+                    <div class="time-jump-item" onclick="jumpToTime('SAMBO')">
+                        <span class="time-jump-name">SAMBO</span>
+                        <span class="time-jump-time">6:50</span>
+                    </div>
+                    <div class="time-jump-item" onclick="jumpToTime('OYE SAMBO')">
+                        <span class="time-jump-name">OYE SAMBO</span>
+                        <span class="time-jump-time">7:02</span>
+                    </div>
+                    <div class="time-jump-item" onclick="jumpToTime('3º FIGURA')">
+                        <span class="time-jump-name">3º FIGURA</span>
+                        <span class="time-jump-time">7:17</span>
+                    </div>
+                    <div class="time-jump-item" onclick="jumpToTime('TERCERA PARTE')">
+                        <span class="time-jump-name">TERCERA PARTE</span>
+                        <span class="time-jump-time">7:32</span>
+                    </div>
+                    <div class="time-jump-item" onclick="jumpToTime('CORTE')">
+                        <span class="time-jump-name">CORTE</span>
+                        <span class="time-jump-time">7:45</span>
+                    </div>
+                    <div class="time-jump-item" onclick="jumpToTime('APUNTAR')">
+                        <span class="time-jump-name">APUNTAR</span>
+                        <span class="time-jump-time">7:58</span>
+                    </div>
+                    <div class="time-jump-item" onclick="jumpToTime('SALTITO')">
+                        <span class="time-jump-name">SALTITO</span>
+                        <span class="time-jump-time">8:02</span>
+                    </div>
+                    <div class="time-jump-item" onclick="jumpToTime('CANON')">
+                        <span class="time-jump-name">CANON</span>
+                        <span class="time-jump-time">8:20</span>
+                    </div>
+                    <div class="time-jump-item" onclick="jumpToTime('INICIO S BLOQUE')">
+                        <span class="time-jump-name">INICIO S BLOQUE</span>
+                        <span class="time-jump-time">8:37</span>
+                    </div>
+                    <div class="time-jump-item" onclick="jumpToTime('CANCIÓN GILDA')">
+                        <span class="time-jump-name">CANCIÓN GILDA</span>
+                        <span class="time-jump-time">8:56</span>
+                    </div>
+                    <div class="time-jump-item" onclick="jumpToTime('CUARTA PARTE')">
+                        <span class="time-jump-name">CUARTA PARTE</span>
+                        <span class="time-jump-time">9:15</span>
+                    </div>
+                    <div class="time-jump-item" onclick="jumpToTime('RELOJ')">
+                        <span class="time-jump-name">RELOJ</span>
+                        <span class="time-jump-time">9:37</span>
+                    </div>
+                    <div class="time-jump-item" onclick="jumpToTime('CANCIÓN CELIA CRUZ')">
+                        <span class="time-jump-name">CANCIÓN CELIA CRUZ</span>
+                        <span class="time-jump-time">10:07</span>
+                    </div>
+                    <div class="time-jump-item" onclick="jumpToTime('FIGURA FINAL')">
+                        <span class="time-jump-name">FIGURA FINAL</span>
+                        <span class="time-jump-time">10:45</span>
+                    </div>
+                    <div class="time-jump-item" onclick="jumpToTime('SALIDA ARICA')">
+                        <span class="time-jump-name">SALIDA ARICA</span>
+                        <span class="time-jump-time">10:50</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="settings" class="tab-content">
+            <div class="section">
+                <h2>Configuración</h2>
+                <a href="shortcuts://run-shortcut?name=Spotify%20Coreograf%C3%ADa&input=text&text=debug_toggle" class="button">Activar/Desactivar Depuración</a>
+                <a href="shortcuts://run-shortcut?name=Spotify%20Coreograf%C3%ADa&input=text&text=change_uri" class="button">Cambiar Canción</a>
+                <a href="shortcuts://run-shortcut?name=Spotify%20Coreograf%C3%ADa&input=text&text=edit_times" class="button">Editar Tiempos de Salto</a>
+            </div>
+            
+            <div class="section">
+                <h2>Información</h2>
+                <p>Esta interfaz web funciona en conjunto con los atajos de Spotify para controlar la reproducción durante los ensayos de coreografía.</p>
+                <p>Para un mejor funcionamiento, añade esta página a tu pantalla de inicio.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="status">
+        Versión 1.0 • Creado con ❤️ para tu coreografía
+    </div>
+    
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].classList.remove("active");
+            }
+            
+            tablinks = document.getElementsByClassName("tab");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active");
+            }
+            
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+        
+        function filterJumps(query) {
+            query = query.toLowerCase();
+            var items = document.querySelectorAll('.time-jump-item');
+            
+            items.forEach(function(item) {
+                var name = item.querySelector('.time-jump-name').textContent.toLowerCase();
+                if (name.includes(query)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+        
+        function jumpToTime(jumpName) {
+            window.location.href = "shortcuts://run-shortcut?name=Spotify%20Time%20Jump&input=text&text=" + encodeURIComponent(jumpName);
+        }
+    </script>
+</body>
+</html>
