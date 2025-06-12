@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <link rel="icon" href="https://www.scdn.co/i/_global/favicon.png" type="image/png">
+    
+    <style>
+        /* === CORRECCIONES PARA iOS === */
+        * {
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+        
+        html {
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+        
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #000000;
+            color: #1DB954;
+            position: relative;
+            /* Removido overflow-x: hidden que causaba problemas */
+            min-height: 100vh;
+            /* Usar min-height en lugar de height para evitar problemas de viewport */
+        }
+        
+        /* Altura dinámica mejorada para iOS */
+        .container {
+            min-height: calc(var(--vh, 1vh) * 100);
+            padding-bottom: env(safe-area-inset-bottom);
+            max-width: 800px;
+            margin: 0 auto;
+            /* Padding responsivo */
+            padding-left: clamp(15px, 4vw, 20px);
+            padding-right: clamp(15px, 4vw, 20px);
+            padding-top: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Previene zoom en textarea */
+        textarea {
+            font-size: 16px !important;
+            -webkit-appearance: none;
+        }
+        
+        /* Otros elementos touch */
+        button {
+            -webkit-appearance: none;
+        }
+
+        .input-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        /* Primer <span> (Texto principal) */
+        .input-header span:first-child {
+            font-size: 17px;
+            font-weight: 700;
+            color: #1DB954;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Segundo <span> (contador) */
+        .input-header span:last-child {
+            font-size: 15px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.6);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        /* Fondo degradado */
+        .gradient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60vh;
+            background: linear-gradient(to bottom, #1DB954 0%, #1a8742 40%, #000000 100%);
+            z-index: -1;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 0px;
+            padding-top: 0px;
+        }
+
+        /* Logo responsivo */
+        .logo {
+            text-align: center;
+            margin-bottom: 1px;
+            /* Contenedor responsivo para la imagen */
+            max-width: 100%;
+            overflow: hidden;
+        }
+        
+        .logo img {
+            /* Imagen responsiva que se adapta al contenedor */
+            max-width: clamp(300px, 60vw, 800px);
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        h1 {
+            /* Tamaño responsivo para el título */
+            font-size: clamp(1.8em, 5vw, 2.5em);
+            font-weight: 700;
+            color: #1DB954;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            /* Tamaño responsivo para el subtítulo */
+            font-size: clamp(1em, 3vw, 1.1em);
+        }
+
+        /* Caja de entrada con padding responsivo */
+        .input-box {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            /* Padding responsivo */
+            padding: clamp(12px, 3vw, 30px);
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .input-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .char-count {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 250px;
+            max-height: 500px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(29, 185, 84, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            color: #1DB954;
+            font-size: 16px;
+            font-family: 'Courier New', Courier, monospace;
+            line-height: 1.6;
+            resize: vertical;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #1DB954;
+            box-shadow: 0 0 20px rgba(29, 185, 84, 0.2);
+        }
+
+        textarea::placeholder {
+            color: rgba(29, 185, 84, 0.5);
+        }
+
+        /* Botones rápidos */
+        .quick-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-quick {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-quick:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #1DB954;
+        }
+
+        /* Botón principal */
+        .btn-convert {
+            display: block;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto 30px;
+            background: #1DB954;
+            color: #000000;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(29, 185, 84, 0.3);
+        }
+
+        .btn-convert:hover {
+            background: #1ed760;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(29, 185, 84, 0.4);
+        }
+
+        /* Resultados con padding responsivo */
+        .results-box {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            /* Padding responsivo */
+            padding: clamp(12px, 3vw, 30px);
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            display: none;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 3px;
+            border-radius: 20px;
+        }
+
+        .tab {
+            padding: 8px 16px;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            font-size: 14px;
+            border-radius: 17px;
+            transition: all 0.2s ease;
+        }
+
+        .tab.active {
+            background: #1DB954;
+            color: #000000;
+        }
+
+        .results-content {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 12px;
+            padding: 20px;
+            font-family: 'Courier New', Courier, monospace;
+            color: #1DB954;
+            font-size: 14px;
+            line-height: 1.6;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        /* Botones de acción */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn-action {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            padding: 12px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-action:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #1DB954;
+            transform: translateY(-1px);
+        }
+
+        /* Estadísticas */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1DB954;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+        }
+
+        /* Notificación */
+        .notification {
+            position: fixed;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1DB954;
+            color: #000000;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            box-shadow: 0 5px 20px rgba(29, 185, 84, 0.4);
+            transition: top 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1000;
+        }
+
+        .notification.show {
+            top: 30px;
+        }
+
+        /* Historial */
+        .history-panel {
+            position: fixed;
+            right: -300px;
+            top: 0;
+            bottom: 0;
+            width: 300px;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(29, 185, 84, 0.2);
+            transition: right 0.3s ease;
+            z-index: 100;
+            overflow-y: auto;
+        }
+
+        .history-panel.show {
+            right: 0;
+        }
+
+        .history-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(29, 185, 84, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .history-title {
+            color: #1DB954;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .history-close {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .history-list {
+            padding: 20px;
+        }
+
+        .history-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .history-item:hover {
+            background: rgba(29, 185, 84, 0.1);
+            border-color: #1DB954;
+        }
+
+        .history-date {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .history-preview {
+            color: #1DB954;
+            font-size: 14px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* Botón de historial */
+        .history-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(29, 185, 84, 0.2);
+            border: 1px solid rgba(29, 185, 84, 0.3);
+            color: #1DB954;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 50;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .history-btn:hover {
+            background: rgba(29, 185, 84, 0.3);
+            transform: scale(1.1);
+        }
+
+        /* Media queries para dispositivos móviles */
+        @media (max-width: 768px) {
+            .container {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+            
+            .input-box, .results-box {
+                padding: 15px;
+            }
+            
+            .logo img {
+                max-width: clamp(250px, 80vw, 400px);
+            }
+            
+            h1 {
+                font-size: clamp(1.5em, 6vw, 2em);
+            }
+            
+            .subtitle {
+                font-size: clamp(0.9em, 4vw, 1em);
+            }
+            
+            .history-panel {
+                width: 100%;
+                right: -100%;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Mejoras específicas para iOS */
+        @supports (-webkit-touch-callout: none) {
+            body {
+                /* Altura fija para iOS */
+                height: 100vh;
+                height: calc(var(--vh, 1vh) * 100);
+            }
+            
+            .container {
+                /* Asegurar que el contenedor no exceda la altura del viewport */
+                max-height: calc(var(--vh, 1vh) * 100);
+                overflow-y: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="gradient-bg"></div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <img 
+                    src="https://raw.githubusercontent.com/djponsex/spotify-time-converter/main/A_digital_graphic_design_features_the_Spotify_Tim.png"
+                    alt="Conversor de Tiempos Spotify PRO"
+                >
+            </div>
+            <h1>Conversor de Tiempos<br>Spotify PRO</h1>
+            <p class="subtitle">Convierte tus cortes al formato JSON</p>
+        </div>
+
+        <div class="input-box">
+            <div class="input-header">
+                <span>📝 Pega tu lista de cortes</span>
+                <span id="charCount">0 caracteres</span>
+            </div>
+            <textarea id="inputText" placeholder="2:10 - INICIO ARICA
+2:25 - FIGURA INICIAL
+3:50 - PARTE ROMÁNTICA
+..."></textarea>
+            
+            <div class="quick-buttons">
+                <button class="btn-quick" onclick="loadExample()">📋 Cargar ejemplo</button>
+                <button class="btn-quick" onclick="pasteFromClipboard()">📋 Pegar</button>
+                <button class="btn-quick" onclick="clearInput()">🗑️ Limpiar</button>
+            </div>
+        </div>
+
+        <button class="btn-convert" onclick="convert()">Convertir a JSON</button>
+
+        <div class="results-box" id="resultsBox">
+            <div class="results-header">
+                <div class="tabs">
+                    <button class="tab active" onclick="showTab('raw')">Raw</button>
+                    <button class="tab" onclick="showTab('visual')">Visual</button>
+                </div>
+            </div>
+            
+            <div class="results-content" id="resultsContent"></div>
+            
+            <div class="action-buttons">
+                <button class="btn-action" onclick="copyToClipboard()">📋 Copiar</button>
+                <button class="btn-action" onclick="downloadJSON()">💾 Descargar</button>
+                <button class="btn-action" onclick="shareLink()">🔗 Compartir</button>
+                <button class="btn-action" onclick="saveToHistory()">💾 Guardar</button>
+            </div>
+            
+            <div class="stats" id="statsContainer"></div>
+        </div>
+    </div>
+
+    <!-- Botón de historial -->
+    <button class="history-btn" onclick="toggleHistory()" title="Historial">📚</button>
+
+    <!-- Panel de historial -->
+    <div class="history-panel" id="historyPanel">
+        <div class="history-header">
+            <div class="history-title">📚 Historial</div>
+            <button class="history-close" onclick="toggleHistory()">×</button>
+        </div>
+        <div class="history-list" id="historyList"></div>
+    </div>
+
+    <!-- Notificación -->
+    <div class="notification" id="notification"></div>
+
+    <script>
+        let rawData = '';
+        let visualData = '';
+        let cuts = [];
+        let history = [];
+        let currentTab = 'raw';
+
+        // Emojis para los cortes
+        const emojiMap = {
+            'INICIO': '🏁',
+            'FIGURA': '💃',
+            'PARTE': '📍',
+            'FINAL': '💕',
+            'APRENDE': '🎯',
+            'CHAMBERGO': '🎩',
+            'CRUCE': '➕',
+            'CANCIÓN': '🎵',
+            'CORTE': '✂️',
+            'APUNTAR': '🎯',
+            'SALTITO': '🦘',
+            'CANON': '🎪',
+            'GILDA': '🎤',
+            'RELOJ': '⏰',
+            'CELIA': '🎶',
+            'SALIDA': '🚪',
+            'ARICA': '🌴',
+            'BLOQUE': '📦',
+            'RED': '🔴',
+            'ROMANTICA': '💕',
+            'ROMÁNTICA': '💕'
+        };
+
+        // Obtener emoji
+        function getEmoji(name) {
+            const upperName = name.toUpperCase();
+            for (const [key, emoji] of Object.entries(emojiMap)) {
+                if (upperName.includes(key)) {
+                    return emoji;
+                }
+            }
+            return '🎵';
+        }
+
+        function updateCharCount() {
+            const text = document.getElementById('inputText').value;
+            document.getElementById('charCount').textContent = `${text.length} caracteres`;
+        }
+
+        function timeToMs(timeStr) {
+            const parts = timeStr.split(':');
+            if (parts.length === 2) {
+                const minutes = parseInt(parts[0]);
+                const seconds = parseInt(parts[1]);
+                return (minutes * 60 + seconds) * 1000;
+            }
+            return 0;
+        }
+
+        function msToTime(ms) {
+            const totalSeconds = Math.floor(ms / 1000);
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function convert() {
+            const input = document.getElementById('inputText').value.trim();
+            
+            if (!input) {
+                showNotification('⚠️ Por favor, ingresa algunos cortes');
+                return;
+            }
+
+            cuts = [];
+            const lines = input.split('\n').filter(line => line.trim());
+            
+            lines.forEach((line, index) => {
+                const match = line.match(/^(\d+:\d+)\s*-\s*(.+)$/);
+                if (match) {
+                    const time = match[1];
+                    const name = match[2].trim();
+                    const ms = timeToMs(time);
+                    cuts.push({ time, name, ms });
+                }
+            });
+
+            if (cuts.length === 0) {
+                showNotification('⚠️ No se encontraron cortes válidos');
+                return;
+            }
+
+            generateJSON();
+            displayResults();
+            updateStats();
+            showNotification('✅ Conversión completada');
+        }
+
+        function generateJSON() {
+            const rawObj = {};
+            const visualObj = {};
+            
+            cuts.forEach((cut, index) => {
+                const key = `${String.fromCharCode(65 + index)} ${cut.name}`;
+                rawObj[key] = cut.ms;
+                
+                // Visual con emoji
+                const emoji = getEmoji(cut.name);
+                const visualKey = `${emoji} ${cut.name} (${cut.time})`;
+                visualObj[visualKey] = cut.ms;
+            });
+            
+            rawData = JSON.stringify(rawObj, null, 2);
+            visualData = JSON.stringify(visualObj, null, 2);
+        }
+
+        function displayResults() {
+            document.getElementById('resultsBox').style.display = 'block';
+            showTab(currentTab);
+        }
+
+        function showTab(tab) {
+            currentTab = tab;
+            const content = document.getElementById('resultsContent');
+            
+            // Actualizar tabs
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`[onclick="showTab('${tab}')"]`).classList.add('active');
+            
+            // Mostrar contenido
+            if (tab === 'raw') {
+                content.textContent = rawData;
+            } else {
+                content.textContent = visualData;
+            }
+        }
+
+        function updateStats() {
+            const container = document.getElementById('statsContainer');
+            const totalDuration = cuts.length > 0 ? cuts[cuts.length - 1].ms : 0;
+            
+            container.innerHTML = `
+                <div class="stat-item">
+                    <div class="stat-value">${cuts.length}</div>
+                    <div class="stat-label">Cortes</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${msToTime(totalDuration)}</div>
+                    <div class="stat-label">Duración</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${Math.round(rawData.length / 1024 * 100) / 100}KB</div>
+                    <div class="stat-label">Tamaño</div>
+                </div>
+            `;
+        }
+
+        function copyToClipboard() {
+            const content = currentTab === 'raw' ? rawData : visualData;
+            navigator.clipboard.writeText(content).then(() => {
+                showNotification('📋 Copiado al portapapeles');
+            });
+        }
+
+        function downloadJSON() {
+            const content = currentTab === 'raw' ? rawData : visualData;
+            const blob = new Blob([content], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `spotify-cuts-${currentTab}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showNotification('💾 Archivo descargado');
+        }
+
+        function shareLink() {
+            try {
+                const data = JSON.parse(rawData);
+                const encoded = btoa(encodeURIComponent(JSON.stringify(data)));
+                const url = `${window.location.origin}${window.location.pathname}?data=${encoded}`;
+                
+                navigator.clipboard.writeText(url).then(() => {
+                    showNotification('🔗 Enlace copiado al portapapeles');
+                });
+            } catch (err) {
+                showNotification('❌ Error al generar enlace');
+            }
+        }
+
+        function loadExample() {
+            const example = `2:10 - INICIO ARICA
+2:25 - FIGURA INICIAL
+3:50 - PARTE ROMÁNTICA
+5:15 - SOLO GUITARRA
+7:30 - FINAL ÉPICO`;
+            
+            document.getElementById('inputText').value = example;
+            updateCharCount();
+            showNotification('📋 Ejemplo cargado');
+        }
+
+        function pasteFromClipboard() {
+            navigator.clipboard.readText().then(text => {
+                document.getElementById('inputText').value = text;
+                updateCharCount();
+                showNotification('📋 Texto pegado');
+            }).catch(() => {
+                showNotification('❌ No se pudo acceder al portapapeles');
+            });
+        }
+
+        function clearInput() {
+            document.getElementById('inputText').value = '';
+            updateCharCount();
+            document.getElementById('resultsBox').style.display = 'none';
+            showNotification('🗑️ Texto limpiado');
+        }
+
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function saveToHistory() {
+            if (!rawData) {
+                showNotification('⚠️ No hay datos para guardar');
+                return;
+            }
+            
+            const item = {
+                date: new Date().toISOString(),
+                preview: cuts.slice(0, 3).map(c => `${c.time} - ${c.name}`).join('\n') + (cuts.length > 3 ? '\n...' : ''),
+                data: { raw: rawData, visual: visualData, cuts }
+            };
+            
+            history.unshift(item);
+            if (history.length > 10) history.pop();
+            
+            localStorage.setItem('spotifyHistory', JSON.stringify(history));
+            displayHistory();
+            showNotification('💾 Guardado en el historial');
+        }
+
+        // Event listeners
+        document.getElementById('inputText').addEventListener('input', updateCharCount);
+        
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCharCount();
+            checkUrlParams();
+            loadHistory();
+        });
+
+        function loadHistory() {
+            try {
+                const saved = localStorage.getItem('spotifyHistory');
+                if (saved) {
+                    history = JSON.parse(saved);
+                    displayHistory();
+                }
+            } catch (err) {
+                console.error('Error loading history:', err);
+            }
+        }
+
+        function displayHistory() {
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = '';
+            
+            history.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'history-item';
+                div.onclick = () => loadFromHistory(index);
+                
+                const date = new Date(item.date);
+                const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+                
+                div.innerHTML = `
+                    <div class="history-date">${dateStr}</div>
+                    <div class="history-preview">${item.preview}</div>
+                `;
+                
+                historyList.appendChild(div);
+            });
+        }
+
+        function loadFromHistory(index) {
+            const item = history[index];
+            rawData = item.data.raw;
+            visualData = item.data.visual;
+            cuts = item.data.cuts;
+            
+            // Reconstruir input
+            const inputText = cuts.map(c => `${c.time} - ${c.name}`).join('\n');
+            document.getElementById('inputText').value = inputText;
+            updateCharCount();
+            
+            displayResults();
+            updateStats();
+            toggleHistory();
+            showNotification('📋 Cargado desde el historial');
+        }
+
+        function toggleHistory() {
+            const panel = document.getElementById('historyPanel');
+            panel.classList.toggle('show');
+        }
+
+        // Verificar parámetros URL
+        function checkUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            const data = params.get('data');
+            
+            if (data) {
+                try {
+                    const decoded = decodeURIComponent(atob(data));
+                    const parsed = JSON.parse(decoded);
+                    
+                    // Reconstruir cortes
+                    cuts = [];
+                    for (const [key, value] of Object.entries(parsed)) {
+                        const time = msToTime(value);
+                        const name = key.replace(/^[^\s]+ /, '').replace(/ \([^)]+\)$/, '');
+                        cuts.push({ time, name, ms: value });
+                    }
+                    
+                    const inputText = cuts.map(c => `${c.time} - ${c.name}`).join('\n');
+                    document.getElementById('inputText').value = inputText;
+                    updateCharCount();
+                    
+                    showNotification('📥 Datos cargados desde el enlace');
+                } catch (err) {
+                    console.error('Error loading URL data:', err);
+                }
+            }
+        }
+
+        // Atajos de teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 'Enter':
+                        e.preventDefault();
+                        convert();
+                        break;
+                    case 'h':
+                        e.preventDefault();
+                        toggleHistory();
+                        break;
+                }
+            }
+        });
+    </script>
+    
+    <script>
+        // Altura dinámica mejorada para iOS
+        function setViewportHeight() {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
+    
+        // Configurar altura inicial
+        setViewportHeight();
+        
+        // Actualizar en eventos de redimensionamiento
+        window.addEventListener('resize', setViewportHeight);
+        window.addEventListener('orientationchange', () => {
+            // Pequeño delay para iOS
+            setTimeout(setViewportHeight, 100);
+        });
+        
+        // Actualizar cuando la barra de direcciones de Safari se oculta/muestra
+        window.addEventListener('scroll', setViewportHeight);
+    </script>
+</body>
+</html>
