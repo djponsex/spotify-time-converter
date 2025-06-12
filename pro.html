@@ -428,16 +428,42 @@
 
         /* Responsive */
         @media (max-width: 600px) {
-            h1 {
-                font-size: 2em;
+            /* Hacer todo más pequeño para que quepa */
+            .container {
+                transform: scale(0.85);
+                transform-origin: top center;
+                width: 117%; /* Compensar el scale */
+                margin-left: -8.5%;
             }
             
+            h1 {
+                font-size: 1.6em; /* original es 2em */
+            }
+            .logo {
+            font-size: 50px; /* Más pequeño */
+            }
+            
+            /* Textarea más grande pero con texto más pequeño */
+                textarea {
+                min-height: 350px;
+                font-size: 14px !important; /* Texto más pequeño */
+            }
             .quick-buttons {
                 flex-direction: column;
             }
             
             .btn-quick {
-                width: 100%;
+                /* Botones más compactos  width: 100%;  */
+
+                padding: 10px 15px;
+                font-size: 13px;
+            }
+    
+            .btn-convert {
+                padding: 15px 30px;
+                font-size: 16px;
+            }
+
             }
             
             .action-buttons {
