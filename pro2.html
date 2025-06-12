@@ -679,6 +679,7 @@
             generateJSON();
             displayResults();
             updateStats();
+            saveToHistory();
             showNotification('✅ Conversión completada');
         }
 
@@ -744,7 +745,7 @@
         function copyToClipboard() {
             const content = currentTab === 'raw' ? rawData : visualData;
             navigator.clipboard.writeText(content).then(() => {
-                showNotification('📋 Copiado al portapapeles');
+                showNotification('📋 JSON Copiado al portapapeles');
             });
         }
 
@@ -783,7 +784,7 @@
             
             document.getElementById('inputText').value = example;
             updateCharCount();
-            showNotification('📋 Ejemplo cargado');
+            showNotification('📝 Ejemplo cargado');
         }
 
         function pasteFromClipboard() {
@@ -800,7 +801,7 @@
             document.getElementById('inputText').value = '';
             updateCharCount();
             document.getElementById('resultsBox').style.display = 'none';
-            showNotification('🗑️ Texto limpiado');
+            showNotification('🗑️ Todo limpiado');
         }
 
         function showNotification(message) {
