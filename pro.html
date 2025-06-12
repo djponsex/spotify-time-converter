@@ -474,18 +474,38 @@
                 grid-template-columns: 1fr;
             }
         }
-            /* Zoom out effect para iOS */
-    @supports (-webkit-touch-callout: none) {
-        /* Solo iOS */
-        body {
-            zoom: 0.8; /* Hace todo 20% más pequeño */
-        }
-        
-        /* O usar transform que es más compatible */
-        .container {
-            transform: scale(0.8);
-            transform-origin: top center;
-        }
+            /* Fix específico para iOS - NO zoom automático */
+            @supports (-webkit-overflow-scrolling: touch) {
+                /* Detecta iOS */
+                input[type="text"],
+                input[type="email"],
+                input[type="tel"],
+                textarea,
+                select {
+                    font-size: 16px !important;
+                }
+                
+                /* Ajustar el logo para que quepa */
+                .logo {
+                    width: 200px;
+                    height: 200px;
+                    object-fit: contain;
+                }
+                
+                /* Si usas una imagen como logo */
+                .logo img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: contain;
+                }
+            }
+            
+            /* Prevenir zoom en focus */
+            input:focus,
+            textarea:focus,
+            select:focus {
+                font-size: 16px !important;
+            }
     </style>
 </head>
 <body>
