@@ -2,10 +2,43 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <link rel="icon" href="https://www.scdn.co/i/_global/favicon.png" type="image/png">
     
     <style>
+                /* === FIX iOS SAFARI === */
+        * {
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+        
+        html {
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+        
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* Altura dinámica para evitar el bug de 100vh en iOS */
+        .container {
+            min-height: calc(var(--vh, 1vh) * 100);
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        /* Previene zoom en textarea */
+        textarea {
+            font-size: 16px !important;
+            -webkit-appearance: none;
+        }
+        
+        /* Otros elementos touch */
+        button {
+            -webkit-appearance: none;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -916,5 +949,16 @@
             }
         });
     </script>
-</body>
-</html>
+    <script>
+        // Altura dinámica para iOS
+        function setViewportHeight() {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
+    
+        setViewportHeight();
+        window.addEventListener('resize', setViewportHeight);
+        window.addEventListener('orientationchange', setViewportHeight);
+    </script>
+        </body>
+        </html>
