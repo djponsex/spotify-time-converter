@@ -474,6 +474,18 @@
                 grid-template-columns: 1fr;
             }
         }
+            /* Zoom out effect para iOS */
+    @supports (-webkit-touch-callout: none) {
+        /* Solo iOS */
+        body {
+            zoom: 0.8; /* Hace todo 20% más pequeño */
+        }
+        
+        /* O usar transform que es más compatible */
+        .container {
+            transform: scale(0.8);
+            transform-origin: top center;
+        }
     </style>
 </head>
 <body>
